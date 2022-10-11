@@ -13,7 +13,6 @@ All other functions of the device can be controlled by a smartphone or other wir
 This device corresponds to STEP 1 in the project. The entire project is described below.
 
 ## Areas requiring assistance
-- Areas requiring help
 - Power supply design validation
 - Knowledge of collaborative development with GitHUB
 - Device box design
