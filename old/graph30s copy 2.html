@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="icon" type="image/x-icon" href="favicon" />
+    <link rel="stylesheet" href="/style.css" />
+    <script src="/chart.js.gz"></script>
+    <title>30second Graph</title>
+    <style>
+        .bb-axis line,
+        .bb-axis .domain {
+            stroke: gray;
+        }
+
+        #chart .line-class1,
+        #chart .line-class2,
+        #chart2 .line-class1,
+        #chart2 .line-class2 {
+            stroke-width: 3px;
+        }
+    </style>
+</head>
+
+<body>
+    <form action="/graph_sw" method="POST"> Graph:
+        <button class="btn btn--gray" type="submit" name="graph_param" value="30s">30sec</button>
+        <button class="btn btn--orange" type="submit" name="graph_param" value="2m">2min</button>
+        /
+        <button class="btn btn--orange" type="submit" name="graph_param" value="30s">Reload</button>
+        <button class="btn btn--orange" type="submit" name="graph_param" value="/">Menu</button>
+    </form>
+    <center>
+        <h3>O2Sensor#1 Voltage(mV)</h3>
+        <div id="bar" style="height:60px;"></div>
+        <div id="chart" style="height:220px;"></div>
+        <hr>
+        <h3>O2Sensor#2 Voltage(mV)</h3>
+        <div id="bar2" style="height:60px;"></div>
+        <div id="chart2" style="height:220px;"></div>
+    </center>
+</body>
+<script>
+
+    var data = ["data1"].concat(0);
+    var interval;
+    var bar = bb.generate({
+        data: {
+            columns: [
+                data
+            ],
+            type: "bar", colors: { data1: 'gray' }
+
+        },
+        axis: { y: { max: 900 }, rotated: true },
+        legend: { show: false },
+        bar: { width: 20 },
+        bindto: "#bar"
+    });
+    function start() {
+        interval = setInterval(async function () {
+            var get_espdata1 = await fetch('/o2_in1');
+            var o2_in1 = await get_espdata1.text();
+            data.splice(1, 1);
+            data.push(o2_in1);
+            bar.load({
+                columns: [data]
+            });
+        }, 200);
+        return;
+        if (interval) {
+            clearInterval(interval);
+            interval = null;
+        }
+    }
+    start();
+
+
+
+    ///////////////////////
+    var chart = {
+        inst: null,
+        interval: null,
+        start: true,
+        init: function () {
+            this.generate();
+            this.attachEvent();
+        },
+        generate: function () {
+            chart2 = this.inst = bb.generate({
+                padding: {
+                    bottom: 10
+                },
+                data: {
+                    x: 'x',
+                    columns: this.getInitData(100),
+                    colors: { o2in1: 'gray', o2out1: 'orange' },
+                    type: "spline"
+
+                },
+                axis: {
+                    x: {
+                        type: 'timeseries',
+                        tick: {
+                            format: '%M:%S',
+                            count: 40,
+                        }
+                    },
+                    y: { max: 900, min: 100 }
+                },
+                line: {
+                    point: false,
+                    classes: [
+                        "line-class1",
+                        "line-class2"]
+                },
+                legend: {
+                    position: "inset",
+                    show: true,
+                    inset: {
+                        anchor: "top-left",
+                        x: 10,
+                        y: 0,
+                        step: 2
+                    },
+                },
+                bindto: "#chart"
+            });
+            this.start = true;
+            this.flow();
+        },
+        attachEvent: function () {
+            document.addEventListener("visibilitychange", () => {
+                if (document.visibilityState === "visible") {
+                    setTimeout(() => {
+                        !this.start && this.init();
+                    }, 0)
+                }
+            });
+        },
+        flow: async function () {
+            var get_espdata1 = await fetch('/o2_in1');
+            var o2_in1 = await get_espdata1.text();
+            var get_espdata2 = await fetch('/o2_out1');
+            var o2_out1 = await get_espdata2.text();
+            this.start && this.inst.flow({
+                columns: [
+                    ["x", +new Date], ["o2in1", o2_in1],
+                    ["o2out1", o2_out1]
+                ],
+                length: 1,
+                duration: 1,
+                // to:10,
+                done: this.flow.bind(this)
+            });
+        },
+        getInitData: function (len) {
+            const d = +new Date - 100 * len;
+            const data = [
+                ["x"], ["o2in1"], ["o2out1"]
+            ];
+            for (let i = 0; i < len; i++) {
+                data[0].push(d + (100 * i));
+                data[1].push(null);
+            }
+            return data;
+        }
+    };
+    chart.init()
+
+
+    ///////////////////////////////////////////////
+    var data2 = ["data2"].concat(0);
+    var interval2;
+    var bar2 = bb.generate({
+        data: {
+            columns: [
+                data2
+            ],
+            type: "bar", colors: { data2: 'gray' }
+
+        },
+        axis: { y: { max: 900 }, rotated: true },
+        legend: { show: false },
+        bar: { width: 20 },
+        bindto: "#bar2"
+    });
+    function start2() {
+        interval2 = setInterval(async function () {
+            var get_espdata2 = await fetch('/o2_in2');
+            var o2_in2 = await get_espdata2.text();
+            data2.splice(1, 1);
+            data2.push(o2_in2);
+            bar2.load({
+                columns: [data2]
+            });
+        }, 200);
+        return;
+        if (interval2) {
+            clearInterval(interval2);
+            interval2 = null;
+        }
+    }
+    start2();
+    /////////////////////////////////
+    var chart2 = {
+        inst: null,
+        interval: null,
+        start: true,
+        init: function () {
+            this.generate();
+            this.attachEvent();
+        },
+        generate: function () {
+            chart2 = this.inst = bb.generate({
+                padding: {
+                    bottom: 10
+                },
+                data: {
+                    x: 'x',
+                    columns: this.getInitData(100),
+                    colors: { o2in2: 'gray', o2out2: 'orange' },
+                    type: "spline"
+                },
+                axis: {
+                    x: {
+                        type: 'timeseries',
+                        tick: {
+                            format: '%M:%S',
+                            count: 40,
+                        }
+                    },
+                    y: { max: 900, min: 100 }
+                },
+                line: {
+                    point: false,
+                    classes: [
+                        "line-class1",
+                        "line-class2"]
+                },
+                legend: {
+                    position: "inset",
+                    show: true,
+                    inset: {
+                        anchor: "top-left",
+                        x: 10,
+                        y: 0,
+                        step: 2
+                    },
+                },
+                bindto: "#chart2"
+            });
+            this.start = true;
+            this.flow();
+        },
+        attachEvent: function () {
+            document.addEventListener("visibilitychange", () => {
+                if (document.visibilityState === "visible") {
+                    setTimeout(() => {
+                        !this.start && this.init();
+                    }, 0)
+                }
+            });
+        },
+        flow: async function () {
+            var get_espdata3 = await fetch('/o2_in2');
+            var o2_in2 = await get_espdata3.text();
+            var get_espdata4 = await fetch('/o2_out2');
+            var o2_out2 = await get_espdata4.text();
+            this.start && this.inst.flow({
+                columns: [
+                    ["x", +new Date], ["o2in2", o2_in2],
+                    ["o2out2", o2_out2]
+                ],
+                length: 1,
+                duration: 1,
+                // to:10,
+                done: this.flow.bind(this)
+            });
+        },
+        getInitData: function (len) {
+            const d = +new Date - 100 * len;
+            const data = [
+                ["x"], ["o2in2"], ["o2out2"]
+            ];
+            for (let i = 0; i < len; i++) {
+                data[0].push(d + (100 * i));
+                data[1].push(null);
+            }
+            return data;
+        }
+    };
+    chart2.init()
+</script>
+</html>

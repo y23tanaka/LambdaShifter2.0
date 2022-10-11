@@ -1,0 +1,13 @@
+
+$str = Get-Content .\hex.txt
+$array = $str.Split(",")
+foreach ($i in $array) { $h = [Convert]::ToInt32($i,16);Write-Host -NoNewline $h; Write-Host -NoNewline ','}
+
+
+Write-Output "今度の韓国一人旅はロケ地巡りしたい。" | Out-File -Append "D:\programing\test2.txt"
+
+
+
+$str = Get-Content .\hex.txt
+$array = $str.Split(",")
+foreach ($i in $array) { $h = [Convert]::ToInt32("$i",16);Write-Output("$h"+",") | Out-File -Append  -NoNewline ".\hex-dec.txt";}

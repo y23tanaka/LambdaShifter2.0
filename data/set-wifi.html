@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>WiFi Client settings</title>
+  <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/x-icon" href="favicon" />
+  <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+  <a href="/"><button class="btn btn--orange">Menu</button></a> <B>> WiFi Client settings</B>
+  <hr>
+  <table cellpadding=5>
+    <tr bgcolor=#666666 align=center>
+      <td width="120">
+        <font color=#ffffff><B>Item</B></font>
+      </td>
+      <td width="260">
+        <font color=#ffffff><B>Contents</B></font>
+      </td>
+    </tr>
+
+    <tr height=40>
+      <td bgcolor="#cccccc"><B>Status</B>
+      </td>
+      <td bgcolor="#efefef">%WIFI_STATUS%</td>
+    </tr>
+
+    <tr height=40>
+      <td bgcolor="#cccccc"><B>SSID</B>
+      </td>
+
+      <td bgcolor="#efefef">
+        <form action="/set-wifi" method="POST">
+          <input type="text" name="ssid" id="ssid" value="%SSID%" pattern="^[a-zA-Z0-9_-]{8,}$" style="width:150px"
+            required></input>
+      </td>
+    </tr>
+
+    <tr height=40>
+      <td bgcolor="#cccccc"><B>Password</B>
+      </td>
+      <td bgcolor="#efefef">
+        <input type="password" name="wifi_pass" id="input_pass" value="%PASSWD%" pattern="^[!-~]{8,}$"
+          style="width:150px" required></input>
+        <button class="btn btn--orange " id="btn_passview">Show</button>
+      </td>
+    </tr>
+
+    <tr height=40>
+      <td bgcolor="#cccccc"><B>Device IP address</B>
+      </td>
+
+      <td bgcolor="#efefef">
+        <input type="number" name="ip_data0" value="%IP_DATA0%" size="3" max="255" min="0" pattern="^[1-9]{1,3}$"
+          style="width:40px" required></input>.
+        <input type="number" name="ip_data1" value="%IP_DATA1%" size="3" max="255" min="0" pattern="^[1-9]{1,3}$"
+          style="width:40px" required></input>.
+        <input type="number" name="ip_data2" value="%IP_DATA2%" size="3" max="255" min="0" pattern="^[1-9]{1,3}$"
+          style="width:40px" required></input>.
+        <input type="number" name="ip_data3" value="%IP_DATA3%" size="3" max="255" min="0" pattern="^[1-9]{1,3}$"
+          style="width:40px" required></input>
+      </td>
+    </tr>
+
+    <tr height=40>
+      <td bgcolor="#cccccc"><B>Subnet Mask</B>
+      </td>
+      <td bgcolor="#efefef">
+        <input type="number" name="subnet_data0" value="%SUBNET_DATA0%" size="3" max="255" min="0"
+          pattern="^[1-9]{1,3}$" style="width:40px" required></input>.
+        <input type="number" name="subnet_data1" value="%SUBNET_DATA1%" size="3" max="255" min="0"
+          pattern="^[1-9]{1,3}$" style="width:40px" required></input>.
+        <input type="number" name="subnet_data2" value="%SUBNET_DATA2%" size="3" max="255" min="0"
+          pattern="^[1-9]{1,3}$" style="width:40px" required></input>.
+        <input type="number" name="subnet_data3" value="%SUBNET_DATA3%" size="3" max="255" min="0"
+          pattern="^[1-9]{1,3}$" style="width:40px" required></input>
+
+      </td>
+    </tr>
+
+    <tr height=40>
+      <td bgcolor="#cccccc"><B>Gateway Address</B>
+      </td>
+      <td bgcolor="#efefef">
+        <input type="number" name="gateway_data0" value="%GATEWAY_DATA0%" size="3" max="255" min="0"
+          pattern="^[1-9]{1,3}$" maxlength="3" style="width:40px" required></input>.
+        <input type="number" name="gateway_data1" value="%GATEWAY_DATA1%" size="3" max="255" min="0"
+          pattern="^[1-9]{1,3}$" style="width:40px" required></input>.
+        <input type="number" name="gateway_data2" value="%GATEWAY_DATA2%" size="3" max="255" min="0"
+          pattern="^[1-9]{1,3}$" style="width:40px" required></input>.
+        <input type="number" name="gateway_data3" value="%GATEWAY_DATA3%" size="3" max="255" min="0"
+          pattern="^[1-9]{1,3}$" style="width:40px" required></input>
+      </td>
+    </tr>
+
+
+    <tr height=40>
+      <td bgcolor="#cccccc"><B>Action</B>
+      </td>
+      <td bgcolor="#efefef">
+        <button class="btn btn--orange"> SET(Restart) </button></form>&nbsp;&nbsp;&nbsp;
+
+      </td>
+    </tr>
+
+
+
+  </table>
+  <div>*These settings are for connecting from a device to a mobile phone or other device.<BR>
+    *If you do not know the connection destination setting, DO NOT CHANGE. <BR>
+
+    <BR>
+    <hr>&copy; 2022 Yosuke Tanaka
+  </div>
+</body>
+<script>
+  window.addEventListener('DOMContentLoaded', function () {
+
+    let btn_passview = document.getElementById("btn_passview");
+    let input_pass = document.getElementById("input_pass");
+
+    btn_passview.addEventListener("click", (e) => {
+
+      e.preventDefault();
+      if (input_pass.type === 'password') {
+        input_pass.type = 'text';
+        btn_passview.textContent = 'Hide';
+
+      } else {
+        input_pass.type = 'password';
+        btn_passview.textContent = 'Show';
+      }
+    });
+
+  });
+
+  const ssid = document.getElementById("ssid");
+  ssid.addEventListener("invalid", e => {
+    if (ssid.validity.valueMissing) {
+      ssid.setCustomValidity("Need input.");
+    } else {
+      //パターンミスマッチ
+      if (ssid.validity.patternMismatch) {
+        ssid.setCustomValidity("Alphanumeric characters, \"-\" and \"_\" only.");
+      } else {
+        ssid.setCustomValidity("");
+      }
+    }
+  })
+
+  const input_pass = document.getElementById("input_pass");
+  input_pass.addEventListener("invalid", e => {
+    if (input_pass.validity.valueMissing) {
+      ssinput_passid.setCustomValidity("Need input.");
+    } else {
+      //パターンミスマッチ
+      if (input_pass.validity.patternMismatch) {
+        input_pass.setCustomValidity("8 or more alphanumeric characters, symbol only.");
+      } else {
+        input_pass.setCustomValidity("");
+      }
+    }
+  })
+
+</script>
+
+</html>

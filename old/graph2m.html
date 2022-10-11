@@ -1,0 +1,166 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<meta name="format-detection" content="telephone=no" />	<link rel="icon" type="image/x-icon" href="favicon" />
+	<link rel="stylesheet" href="/style.css.gz">
+	<script src="/chart.js.gz"></script>
+	<title>2minute Graph</title>
+</head>
+<body>
+	<form action="/graph_sw" method="POST"> Graph:
+		<button class="btn btn--orange" type="submit" name="graph_param" value="2in1">2in1</button>
+		<button class="btn btn--orange" type="submit" name="graph_param" value="bar">Bar</button>
+		<button class="btn btn--orange" type="submit" name="graph_param" value="30s">30s</button>
+		<button class="btn btn--gray" type="submit" name="graph_param" value="2m">2m</button>
+		/
+		<button class="btn btn--orange" type="submit" name="graph_param" value="2m">Reload</button>
+		<button class="btn btn--orange" type="submit" name="graph_param" value="menu">Menu</button>
+	</form>
+	<div id="chart-1" class="container" style="height: 300px; margin: 0 auto"></div>
+	<hr>
+	<div id="chart-2" class="container" style="height: 300px; margin: 0 auto"></div>
+	<small>
+		<hr>&copy; 2022 Yosuke Tanaka
+	</small>
+</body>
+
+<script>
+	var chart1 = new Highcharts.Chart({
+		chart: { renderTo: 'chart-1', animation: false },
+		colors: ['#777777', '#ff9900'],
+		title: { text: 'O2Sensor#1 Voltage (mV)' },
+		series: [
+			{ name: 'O2_in_volt', data: [] },
+			{ name: 'O2_out_volt', data: [] }
+		],
+		legend: {
+			layout: 'vertical',
+			align: 'left',
+			x: 40,
+			verticalAlign: 'top',
+			y: 40,
+			floating: true,
+			backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+		},
+		plotOptions: {
+			series: {
+				animation: false
+			},
+			line: {marker: false }
+		},
+		drilldown: {
+			animation: false
+		},
+		xAxis: {
+			type: 'datetime',
+			dateTimeLabelFormats: { second: '%H:%M:%S' }
+		},
+		yAxis: {
+			title: { text: '' }, max: 1000, min: 0, tickInterval: 100,tickInterval: 100
+		},
+		credits: { enabled: false }
+	});
+	setInterval(function () {
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function () {
+			if (this.readyState == 4 && this.status == 200) {
+				var x = (new Date()).getTime(),
+					y = parseFloat(this.responseText);
+				if (chart1.series[0].data.length > 240) {
+					chart1.series[0].addPoint([x, y], true, true, true);
+				} else {
+					chart1.series[0].addPoint([x, y], true, false, true);
+				}
+			}
+		};
+		xhttp.open("GET", "/o2_in1", true);
+		xhttp.send();
+
+		var xhttp2 = new XMLHttpRequest();
+		xhttp2.onreadystatechange = function () {
+			if (this.readyState == 4 && this.status == 200) {
+				var x2 = (new Date()).getTime(),
+					y2 = parseFloat(this.responseText);
+				//console.log(this.responseText);
+				if (chart1.series[1].data.length > 360) {
+					chart1.series[1].addPoint([x2, y2], true, true, true);
+				} else {
+					chart1.series[1].addPoint([x2, y2], true, false, true);
+				}
+			}
+		};
+		xhttp2.open("GET", "/o2_out1", true);
+		xhttp2.send();
+	}, 500);
+
+
+	var chart2 = new Highcharts.Chart({
+		chart: { renderTo: 'chart-2', animation: false },
+		colors: ['#777777', '#ff9900'],
+		title: { text: 'O2Sensor#2 Voltage (mV)' },
+		series: [
+			{ name: 'O2_in_volt', data: [] },
+			{ name: 'O2_out_volt', data: [] }
+		],
+		legend: {
+			layout: 'vertical',
+			align: 'left',
+			x: 40,
+			verticalAlign: 'top',
+			y: 40,
+			floating: true,
+			backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+		},
+		plotOptions: {
+			series: {
+				animation: false
+			},
+			line: {marker: false }
+		},
+		drilldown: {
+			animation: false
+		},
+		xAxis: {
+			type: 'datetime',
+			dateTimeLabelFormats: { second: '%H:%M:%S' }
+		},
+		yAxis: {
+			title: { text: '' }, max: 1000, min: 0, tickInterval: 100
+		},
+		credits: { enabled: false }
+	});
+	setInterval(function () {
+		var xhttp3 = new XMLHttpRequest();
+		xhttp3.onreadystatechange = function () {
+			if (this.readyState == 4 && this.status == 200) {
+				var x3 = (new Date()).getTime(),
+					y3 = parseFloat(this.responseText);
+				if (chart2.series[0].data.length > 360) {
+					chart2.series[0].addPoint([x3, y3], true, true, true);
+				} else {
+					chart2.series[0].addPoint([x3, y3], true, false, true);
+				}
+			}
+		};
+		xhttp3.open("GET", "/o2_in2", true);
+		xhttp3.send();
+
+		var xhttp4 = new XMLHttpRequest();
+		xhttp4.onreadystatechange = function () {
+			if (this.readyState == 4 && this.status == 200) {
+				var x4 = (new Date()).getTime(),
+					y4 = parseFloat(this.responseText);
+				if (chart2.series[1].data.length > 150) {
+					chart2.series[1].addPoint([x4, y4], true, true, true);
+				} else {
+					chart2.series[1].addPoint([x4, y4], true, false, true);
+				}
+			}
+		};
+		xhttp4.open("GET", "/o2_out2", true);
+		xhttp4.send();
+	}, 500);
+</script>
+
+</html>

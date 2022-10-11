@@ -1,0 +1,23 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <title>Ajaxてすと</title>
+</head>
+<body>
+    <div id="result"></div>
+    <script>
+    function getXhttp(){var ajax = new XMLHttpRequest();
+      var y1;
+        ajax.addEventListener('load', function() {
+            y1 = this.responseText;
+        })
+        ajax.open('get', './sample.txt');
+        ajax.send()
+        return y1;
+        }
+        document.write(getXhttp());
+    </script>
+</body>
+</html>
