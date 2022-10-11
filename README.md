@@ -12,6 +12,13 @@ The advantages of making it richer are as follows
 All other functions of the device can be controlled by a smartphone or other wireless LAN-compatible device.
 This device corresponds to STEP 1 in the project. The entire project is described below.
 
+## Areas requiring assistance
+- Areas requiring help
+- Power supply design validation
+- Knowledge of collaborative development with GitHUB
+- Device box design
+ ->We are currently using a generic product called FLT20190828J-0058.
+
 ## Project Outline
 A/F Ratio Tuning/Visualization Device Development Project Summary
 
