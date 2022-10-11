@@ -44,7 +44,7 @@ Develop and market a device that can set and visualize closed-loop and open-loop
 - All operations must be completed by a smartphone.
 - All operations must be completed by a smartphone, including firmware upload.
 - Compact as possible.
-　->▪ Motorcycles have limited space for installation.
+　->Motorcycles have limited space for installation.
 - All designs must be open source.
 - The source must be available in English.
 - The device should provide users with a manual on how to use the device.
