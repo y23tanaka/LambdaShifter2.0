@@ -24,12 +24,12 @@ Custom ECU chips, sensor spoofing, and other devices of questionable effectivene
 However, users do not have the means to objectively evaluate the validity of these devices.
 
 ### Target.
-　Motorcycle users with one or two Bosch narrowband O2 sensors
-　BMW R1100S, R1150R, R1150RT, and R1150GS are targeted until STEP 1 described below.
-　Because the basic specifications of the air-fuel ratio measurement and ECU are the same as those of the test machine (R1100S).
+Motorcycle users with one or two Bosch narrowband O2 sensors
+BMW R1100S, R1150R, R1150RT, and R1150GS are targeted until STEP 1 described below.
+Because the basic specifications of the air-fuel ratio measurement and ECU are the same as those of the test machine (R1100S).
 
 ### GOAL
-　Develop and market a device that can set and visualize closed-loop and open-loop A/F ratios using a smartphone.
+Develop and market a device that can set and visualize closed-loop and open-loop A/F ratios using a smartphone.
 
 ### Device Requirements
 - The device must be mounted on the motorcycle itself.
@@ -37,7 +37,7 @@ However, users do not have the means to objectively evaluate the validity of the
 - The device must be able to withstand surges and inrush currents.
 - All operations must be completed by a smartphone.
 - All operations must be completed by a smartphone, including firmware upload.
-Compact as possible.
+- Compact as possible.
 　->▪ Motorcycles have limited space for installation.
 - All designs must be open source.
 - The source must be available in English.
@@ -55,11 +55,11 @@ Operation via smartphone
 Open-loop map switching function by coding plug (optional)
 
 #### STEP2 Development of device using commercially available Bosch broadband 02 sensor
-　　->In short, a smartphone version of LC-2
+->In short, a smartphone version of LC-2
 
 #### STEP3 (undecided) Development of a device with sub-controller function
-　->In essence, upward compatible with PowerCommander3.
-　->Smartphone operation, visualization of air-fuel ratio, and log acquisition
+->In essence, upward compatible with PowerCommander3.
+->Smartphone operation, visualization of air-fuel ratio, and log acquisition
 
 ### Schedule
 　Undecided
