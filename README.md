@@ -64,6 +64,7 @@ Beta version to FaceBook community, publicity
 #### STEP2
  Development of device using commercially available Bosch broadband 02 sensor
  ->In short, a smartphone version of LC-2
+ ->Function for Speeduino Wideband O2 Sensor controller.
 
 #### STEP3 (undecided) 
  Development of a device with sub-controller function
