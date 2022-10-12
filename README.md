@@ -42,7 +42,6 @@ Develop and market a device that can set and visualize closed-loop and open-loop
 - The device must be mounted on the motorcycle itself.
 - The device shall operate on motorcycle voltage.
 - The device must be able to withstand surges and inrush currents.
-- All operations must be completed by a smartphone.
 - All operations must be completed by a smartphone, including firmware upload.
 - Compact as possible.
 　->Motorcycles have limited space for installation.
