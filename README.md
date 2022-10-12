@@ -17,6 +17,7 @@ This device corresponds to STEP 1 in the project. The entire project is describe
 - Knowledge of collaborative development with GitHUB
 - Device box design
  ->We are currently using a generic product called FLT20190828J-0058.
+- Photo of R1150 series coding plug insert and pinout (actual machine )
 
 ## Project Outline
 A/F Ratio Tuning/Visualization Device Development Project Summary
