@@ -15,8 +15,9 @@ This device corresponds to STEP 1 in the project. The entire project is describe
 ## Areas requiring assistance
 - Power supply design validation
 - Knowledge of collaborative development with GitHUB
-- Device box design
+- Device box design  
  ->We are currently using a generic product called FLT20190828J-0058.
+- Photo of R1150 series coding plug insert and pinout (actual machine )
 
 ## Project Outline
 A/F Ratio Tuning/Visualization Device Development Project Summary
@@ -31,7 +32,7 @@ However, users do not have the means to objectively evaluate the validity of the
 
 ### Target.
 - Motorcycle users with one or two Bosch narrowband O2 sensors
-- BMW R1100S, R1150R, R1150RT, and R1150GS are targeted until STEP 1 described below.
+- BMW R1100S, R1150R, R1150RT, and R1150GS are targeted until STEP 1 described below.  
   Because the basic specifications of the air-fuel ratio measurement and ECU are the same as those of the test machine (R1100S).
 
 ### GOAL
@@ -41,9 +42,8 @@ Develop and market a device that can set and visualize closed-loop and open-loop
 - The device must be mounted on the motorcycle itself.
 - The device shall operate on motorcycle voltage.
 - The device must be able to withstand surges and inrush currents.
-- All operations must be completed by a smartphone.
 - All operations must be completed by a smartphone, including firmware upload.
-- Compact as possible.
+- Compact as possible.  
 　->Motorcycles have limited space for installation.
 - All designs must be open source.
 - The source must be available in English.
@@ -58,16 +58,16 @@ Beta version to FaceBook community, publicity
 ### Development Steps
 #### STEP1
  Develop a device that utilizes a stock narrow band O2 sensor
-- Operation via smartphone  
+- Operation via smartphone
 - Open-loop map switching function by coding plug (optional)  
 
 #### STEP2
- Development of device using commercially available Bosch broadband 02 sensor
- ->In short, a smartphone version of LC-2
+ Development of device using commercially available Bosch broadband 02 sensor  
+ ->In short, a smartphone version of LC-2  
  ->Function for Speeduino Wideband O2 Sensor controller.
 
 #### STEP3 (undecided) 
- Development of a device with sub-controller function
+ Development of a device with sub-controller function  
  ->In essence, upward compatible with PowerCommander3.  
  ->Smartphone operation, visualization of air-fuel ratio, and log acquisition  
 
