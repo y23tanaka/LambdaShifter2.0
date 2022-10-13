@@ -23,8 +23,8 @@ This program performs the following functions
 const String firm_version = "2.0.8";
 
 ///// WiFi Config /////
-const char ap_ssid[] = "LS20-AP0002";
-const char ap_pass[] = "HB4uNA4cmb"; //
+const char ap_ssid[] = "LS20-AP0003";
+const char ap_pass[] = "9brzGExmEC"; //
 const IPAddress ap_ip(10, 1, 1, 1);
 const IPAddress ap_subnet(255, 255, 255, 0);
 const IPAddress dns(8, 8, 8, 8);
@@ -698,20 +698,20 @@ void loop()
 //   in_volt1 =  (o2_value1 + 270) * 1825 / 4096;
 // in_volt1 =  (in_volt1 * 3 + (o2_value1 + 270) * 1825 / 4096) / 4  ;
 // in_volt2 =  (in_volt2 * 3 + (o2_value2 + 270) * 1825 / 4096) / 4  ;
-in_volt1 =  (in_volt1 * 3 + (o2_value1 + 230) * 1815 / 4095) / 4  ;
-in_volt2 =  (in_volt2 * 3 + (o2_value2 + 230) * 1815 / 4095) / 4  ;
+in_volt1 =  (in_volt1 * 3 + (o2_value1 + 250) * 1815 / 4095) / 4  ;
+in_volt2 =  (in_volt2 * 3 + (o2_value2 + 250) * 1815 / 4095) / 4  ;
 
 
 serial_out_volt1 = in_volt1 + shift_value;
 serial_out_volt2 = in_volt2 + shift_value;
 
-  int out_duty1 = (in_volt1 + shift_value) * 256 / 3070 - 11;
-  int out_duty2 = (in_volt1 + shift_value) * 256 / 3070 - 11;
+  int out_duty1 = (in_volt1 + shift_value) * 256 / 3070 - 9;
+  int out_duty2 = (in_volt1 + shift_value) * 256 / 3070 - 9;
 
   if (af_value == "0.01")
   {
-    out_duty1 = 27;
-    out_duty2 = 27;
+    out_duty1 = 28;
+    out_duty2 = 28;
     serial_out_volt1 = 450;
     serial_out_volt2 = 450;
   }
