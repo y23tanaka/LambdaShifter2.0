@@ -23,8 +23,8 @@ This program performs the following functions
 const String firm_version = "2.0.8";
 
 ///// WiFi Config /////
-const char ap_ssid[] = "LS20-AP0002";
-const char ap_pass[] = "HB4uNA4cmb"; //
+const char ap_ssid[] = "LS20-AP0000";
+const char ap_pass[] = "setyourpassword"; //
 const IPAddress ap_ip(10, 1, 1, 1);
 const IPAddress ap_subnet(255, 255, 255, 0);
 const IPAddress dns(8, 8, 8, 8);
@@ -293,7 +293,7 @@ String processor(const String &var)
   return String();
 }
 
-
+// Function to write device settings to a file
 void write_setup_config()
 {
   String wrfile1 = "/setup_config";
@@ -304,6 +304,7 @@ void write_setup_config()
   fw1.close();
 }
 
+// Function to write WiFi settings to a file
 void write_wifi_config()
 {
   String wrfile2 = "/wifi_config";
@@ -332,32 +333,9 @@ void write_wifi_config()
   fw2.print(".");
   fw2.println(gateway_data3);
   fw2.close();
-
-  /*  Serial.println(ssid);
-    Serial.println(wifi_pass);
-    Serial.print(ip_data0);
-    Serial.print(".");
-    Serial.print(ip_data1);
-    Serial.print(".");
-    Serial.print(ip_data2);
-    Serial.print(".");
-    Serial.println(ip_data3);
-    Serial.print(subnet_data0);
-    Serial.print(".");
-    Serial.print(subnet_data1);
-    Serial.print(".");
-    Serial.print(subnet_data2);
-    Serial.print(".");
-    Serial.println(subnet_data3);
-    Serial.print(gateway_data0);
-    Serial.print(".");
-    Serial.print(gateway_data1);
-    Serial.print(".");
-    Serial.print(gateway_data2);
-    Serial.print(".");
-    Serial.println(gateway_data3);*/
 }
 
+// Function for split IP address format
 int split(String data, char delimiter, String *dst)
 {
   int index = 0;
@@ -377,16 +355,18 @@ int split(String data, char delimiter, String *dst)
   }
   return (index + 1);
 }
+
+// Function for boot AP mode.
 void start_ap()
 {
   Serial.println("wifi connection timeout, AP Start");
   WiFi.disconnect(true);
   WiFi.mode(WIFI_OFF);
   delay(100);
-  WiFi.softAP(ap_ssid, ap_pass);              // SSIDとパスの設定
-  delay(100);                                 // このdelayを入れないと失敗する場合がある
-  WiFi.softAPConfig(ap_ip, ap_ip, ap_subnet); // IPアドレス、ゲートウェイ、サブネットマスクの設定
-  IPAddress myIP = WiFi.softAPIP();           // WiFi.softAPIP()でWiFi起動
+  WiFi.softAP(ap_ssid, ap_pass);              
+  delay(100);                                 
+  WiFi.softAPConfig(ap_ip, ap_ip, ap_subnet); 
+  IPAddress myIP = WiFi.softAPIP();           
       Serial.println("AP Connected");
     Serial.println(myIP);
 }
@@ -405,20 +385,20 @@ void setup()
   analogSetWidth(10);
 
 
-  // SPIFFSのセットアップ
+  // SPIFFS File read/write 
   if (!SPIFFS.begin(true))
   {
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;
   }
 
-  /////ログファイル準備
+  ///// Initialize log file
   SPIFFS.remove("/ls-oat_log.csv");
   File fileToWrite = SPIFFS.open("/ls-oat_log.csv", FILE_WRITE);
   fileToWrite.println("time(mil),in_volt1,out_volt1,in_volt2,out_volt2,shift_voltage(mV),map");
   fileToWrite.close();
 
-  ///// Setup Config読み取り
+  ///// Read setup Config
   String wrfile1 = "/setup_config";
   File fr1 = SPIFFS.open(wrfile1.c_str(), "r");
   af_value = fr1.readStringUntil('\n');
@@ -430,7 +410,7 @@ void setup()
   file_version = fr1.readStringUntil('\n');
   fr1.close();
 
-  //////
+  ////// Read wifi config
   String wrfile2 = "/wifi_config";
   File fr2 = SPIFFS.open(wrfile2.c_str(), "r");
   ssid = fr2.readStringUntil('\n');
@@ -463,12 +443,13 @@ void setup()
   gateway_data2 = gateway_data[2].toInt();
   gateway_data3 = gateway_data[3].toInt();
   const IPAddress gateway(gateway_data0, gateway_data1, gateway_data2, gateway_data3);
-
   fr2.close();
 
-  Serial.println(ssid);
-  Serial.println(String(wifi_pass));
+ 
+ // Serial.println(ssid);
+ // Serial.println(String(wifi_pass));
 
+ // Depending on the result of the file read, the output value for the coding plug is changed.
   if (code_value == 1)
   {
     digitalWrite(CODE_PIN1, LOW);
@@ -485,11 +466,12 @@ void setup()
     digitalWrite(CODE_PIN2, HIGH);
   }
 
-  // Wifiのセットアップ
+  // Try WiFi Client mode.
   WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid.c_str(), wifi_pass.c_str()); //  接続確立まで待つこと
+  WiFi.begin(ssid.c_str(), wifi_pass.c_str()); 
   Serial.println("Connecting...");
   int wifi_count = 0;
+ //Wait 5 second. If device cannot connect with client mode, output status.
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
@@ -502,12 +484,16 @@ void setup()
       break;
     }
   }
+ 
+  //If device can connect with client mode, output status.
   if (WiFi.status() == WL_CONNECTED)
   {
     WiFi.config(ip, gateway, subnet, dns);
     Serial.println("Connected");
     Serial.println(WiFi.localIP());
   }
+ 
+ // After connect as client mode, check IP address setting.
   bool ping_gateway = Ping.ping(gateway, 2);
   bool ping_dns = Ping.ping(dns, 2);
   if (!ping_gateway)
@@ -535,9 +521,8 @@ void setup()
 
 
 
-  // GETリクエストに対するハンドラーを登録 rootにアクセスされた時のレスポンス
-
-
+//// Register http handler
+ // Menu
   server.on("/", HTTP_ANY, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/setup.html", String(), false, processor); });
 
@@ -550,11 +535,11 @@ void setup()
   server.on("/favicon", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/favicon.ico", "image/x-icon"); });
 
-  // WIFI設定のダウンロード
+  //// Download wifi setting 
   server.on("/wifi_config", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/wifi_config", "text/csv"); });
 
-  // デバイス設定のダウンロード
+  // Download device setting
   server.on("/setup_config", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/setup_config", "text/csv"); });
 
@@ -577,7 +562,7 @@ void setup()
     write_setup_config();}
     request->send(SPIFFS, "/setup.html", String(), false, processor); });
 
-  // MAPセットの際のPOST処理
+  // MAP setting
   server.on("/set_map", HTTP_ANY, [](AsyncWebServerRequest *request)
             {
     map_value = request->arg("map_param");
@@ -611,6 +596,7 @@ void setup()
     request->send(SPIFFS, "/setup.html",String(), false, processor);} 
             });
 
+ // #2 O2sensor off/on
   server.on("/secondary_sw", HTTP_ANY, [](AsyncWebServerRequest *request)
             {
     if(secondary_value == "OFF"){secondary_value = "ON";}
@@ -618,7 +604,7 @@ void setup()
     request->send(SPIFFS, "/graph.html",String(),false,processor);
       });
 
-
+ // Load graph engine.
   server.on("/chart.js.gz", HTTP_GET, [](AsyncWebServerRequest *request)
             { AsyncWebServerResponse *response = request->beginResponse(SPIFFS, "/chart.js.gz", "text/javascript");
     response->addHeader("Content-Encoding", "gzip");
@@ -626,29 +612,27 @@ void setup()
 
   server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request)
             { AsyncWebServerResponse *response = request->beginResponse(SPIFFS, "/style.css", "text/css");
- //   response->addHeader("Content-Encoding", "gzip");
     request->send(response); });
 
+ // Return sensor value
   server.on("/o2_in1", HTTP_GET, [](AsyncWebServerRequest *request)
             {  String o2_in1_str = String(in_volt1 ) ;
         request->send_P(200, "text/plain", o2_in1_str.c_str()); });
-
   server.on("/o2_out1", HTTP_GET, [](AsyncWebServerRequest *request)
             { String o2_out1_str = String(serial_out_volt1) ;
         request->send_P(200, "text/plain", o2_out1_str.c_str()); });
-
   server.on(
       "/o2_in2", HTTP_GET, [](AsyncWebServerRequest *request)
       { if(secondary_value == "ON"){
               String o2_in2_str = String(in_volt2 ) ;
              request->send_P(200, "text/plain", o2_in2_str.c_str());} });
-
   server.on(
       "/o2_out2", HTTP_GET, [](AsyncWebServerRequest *request)
       { if(secondary_value == "ON"){
               String o2_out2_str = String(serial_out_volt2) ;
               request->send_P(200, "text/plain", o2_out2_str.c_str()); } });
-
+ 
+  // Display wifi setting 
   server.on("/set-wifi", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/set-wifi.html", String(), false, processor); });
 
@@ -685,26 +669,31 @@ void setup()
               reset_code = 1;
               request->send(SPIFFS, "/setup.html", String(), false, processor); });
 
-  // サーバースタート
+  // Start software uploader
   AsyncElegantOTA.begin(&server);
+  // Start Webserial 
   WebSerial.begin(&server);
-  server.begin();
+   // http server start
+ server.begin();
 }
 
 void loop()
 {
+ // Input sensor data from ADC.
   int o2_value1 = analogRead(O2IN_PIN1);
   int o2_value2 = analogRead(O2IN_PIN2);
-//   in_volt1 =  (o2_value1 + 270) * 1825 / 4096;
-// in_volt1 =  (in_volt1 * 3 + (o2_value1 + 270) * 1825 / 4096) / 4  ;
-// in_volt2 =  (in_volt2 * 3 + (o2_value2 + 270) * 1825 / 4096) / 4  ;
-in_volt1 =  (in_volt1 * 3 + (o2_value1 + 230) * 1815 / 4095) / 4  ;
-in_volt2 =  (in_volt2 * 3 + (o2_value2 + 230) * 1815 / 4095) / 4  ;
+ // This value need to adjust due to ESP32 indivisuality.
+ // An offset around 0v is added to adjust the slope between the actual and measured values.
+ // In many cases, the error can be corrected simply by adjusting the offset.
+ // Moving averages are taken to reduce sensor variability.
+  in_volt1 =  (in_volt1 * 3 + (o2_value1 + 230) * 1815 / 4095) / 4  ;
+  in_volt2 =  (in_volt2 * 3 + (o2_value2 + 230) * 1815 / 4095) / 4  ;
 
-
-serial_out_volt1 = in_volt1 + shift_value;
-serial_out_volt2 = in_volt2 + shift_value;
-
+  serial_out_volt1 = in_volt1 + shift_value
+  serial_out_volt2 = in_volt2 + shift_value;
+ // This value need to adjust due to ESP32 indivisuality.
+ // An offset around 0v is added to adjust the slope between the actual and measured values.
+ // In many cases, the error can be corrected simply by adjusting the offset.
   int out_duty1 = (in_volt1 + shift_value) * 256 / 3070 - 11;
   int out_duty2 = (in_volt1 + shift_value) * 256 / 3070 - 11;
 
