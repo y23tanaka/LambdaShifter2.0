@@ -24,8 +24,8 @@ const String firm_version = "2.0.8";
 
 ///// WiFi Config /////
 
-const char ap_ssid[] = "LS20-AP0000";
-const char ap_pass[] = "setyourpassword"; 
+const char ap_ssid[] = "LS20-AP0004";
+const char ap_pass[] = "Wz8waCCnHp"; 
 const IPAddress ap_ip(10, 1, 1, 1);
 const IPAddress ap_subnet(255, 255, 255, 0);
 const IPAddress dns(8, 8, 8, 8);
@@ -683,35 +683,21 @@ void loop()
  // Input sensor data from ADC.
   int o2_value1 = analogRead(O2IN_PIN1);
   int o2_value2 = analogRead(O2IN_PIN2);
-<<<<<<< HEAD
-//   in_volt1 =  (o2_value1 + 270) * 1825 / 4096;
-// in_volt1 =  (in_volt1 * 3 + (o2_value1 + 270) * 1825 / 4096) / 4  ;
-// in_volt2 =  (in_volt2 * 3 + (o2_value2 + 270) * 1825 / 4096) / 4  ;
-in_volt1 =  (in_volt1 * 3 + (o2_value1 + 250) * 1815 / 4095) / 4  ;
-in_volt2 =  (in_volt2 * 3 + (o2_value2 + 250) * 1815 / 4095) / 4  ;
 
-
-serial_out_volt1 = in_volt1 + shift_value;
-serial_out_volt2 = in_volt2 + shift_value;
-
-  int out_duty1 = (in_volt1 + shift_value) * 256 / 3070 - 9;
-  int out_duty2 = (in_volt1 + shift_value) * 256 / 3070 - 9;
-=======
  // This value need to adjust due to ESP32 indivisuality.
  // An offset around 0v is added to adjust the slope between the actual and measured values.
  // In many cases, the error can be corrected simply by adjusting the offset.
  // Moving averages are taken to reduce sensor variability.
-  in_volt1 =  (in_volt1 * 3 + (o2_value1 + 230) * 1815 / 4095) / 4  ;
-  in_volt2 =  (in_volt2 * 3 + (o2_value2 + 230) * 1815 / 4095) / 4  ;
+  in_volt1 =  (in_volt1 * 3 + (o2_value1 + 270) * 1815 / 4095) / 4  ;
+  in_volt2 =  (in_volt2 * 3 + (o2_value2 + 270) * 1815 / 4095) / 4  ;
 
-  serial_out_volt1 = in_volt1 + shift_value
+  serial_out_volt1 = in_volt1 + shift_value;
   serial_out_volt2 = in_volt2 + shift_value;
  // This value need to adjust due to ESP32 indivisuality.
  // An offset around 0v is added to adjust the slope between the actual and measured values.
  // In many cases, the error can be corrected simply by adjusting the offset.
-  int out_duty1 = (in_volt1 + shift_value) * 256 / 3070 - 11;
-  int out_duty2 = (in_volt1 + shift_value) * 256 / 3070 - 11;
->>>>>>> efa2c2447d260968a8671fe0df46bcd891ce930c
+  int out_duty1 = (in_volt1 + shift_value) * 256 / 3070 - 9;
+  int out_duty2 = (in_volt1 + shift_value) * 256 / 3070 - 9;
 
   if (af_value == "0.01")
   {
