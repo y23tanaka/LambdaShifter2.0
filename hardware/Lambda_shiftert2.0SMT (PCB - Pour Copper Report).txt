@@ -5,8 +5,8 @@ Report Written:     Wednesday, October 19, 2022
 Design Path:        C:\Users\user\Documents\PlatformIO\Projects\Lambda Shifter OTA\hardware\Lambda_shiftert2.0SMT.pcb
 Design Title:       
 Created:            8/2/2022 8:47:14 AM
-Last Saved:         10/19/2022 12:47:18 AM
-Editing Time:       25821 min
+Last Saved:         10/19/2022 6:08:24 AM
+Editing Time:       25826 min
 Units:              mm (precision 1)
 
 
