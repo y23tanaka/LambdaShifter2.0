@@ -20,12 +20,12 @@ This program performs the following functions
 #define FORMAT_SPIFFS_IF_FAILED true
 
 ///// Firm version
-const String firm_version = "2.0.8";
+const String firm_version = "2.0.9";
 
 ///// WiFi Config /////
 
-const char ap_ssid[] = "LS20-AP0004";
-const char ap_pass[] = "Wz8waCCnHp"; 
+const char ap_ssid[] = "LS20-AP0000";
+const char ap_pass[] = "setyourpassword"; 
 const IPAddress ap_ip(10, 1, 1, 1);
 const IPAddress ap_subnet(255, 255, 255, 0);
 const IPAddress dns(8, 8, 8, 8);
@@ -382,7 +382,7 @@ void setup()
   pinMode(O2OUT_PIN2, OUTPUT);
   pinMode(CODE_PIN1, OUTPUT);
   pinMode(CODE_PIN2, OUTPUT);
-  analogSetAttenuation(ADC_6db);  
+  analogSetAttenuation(ADC_2_5db);  
   analogSetWidth(10);
 
 
@@ -688,21 +688,21 @@ void loop()
  // An offset around 0v is added to adjust the slope between the actual and measured values.
  // In many cases, the error can be corrected simply by adjusting the offset.
  // Moving averages are taken to reduce sensor variability.
-  in_volt1 =  (in_volt1 * 3 + (o2_value1 + 270) * 1815 / 4095) / 4  ;
-  in_volt2 =  (in_volt2 * 3 + (o2_value2 + 270) * 1815 / 4095) / 4  ;
+  in_volt1 =  (in_volt1 * 3 + (o2_value1 + 330) * 1330 / 4095) / 4  ;
+  in_volt2 =  (in_volt2 * 3 + (o2_value2 + 330) * 1330 / 4095) / 4  ;
 
   serial_out_volt1 = in_volt1 + shift_value;
   serial_out_volt2 = in_volt2 + shift_value;
  // This value need to adjust due to ESP32 indivisuality.
  // An offset around 0v is added to adjust the slope between the actual and measured values.
  // In many cases, the error can be corrected simply by adjusting the offset.
-  int out_duty1 = (in_volt1 + shift_value) * 256 / 3070 - 9;
-  int out_duty2 = (in_volt1 + shift_value) * 256 / 3070 - 9;
+  int out_duty1 = (in_volt1 + shift_value) * 256 / 3055 - 7;
+  int out_duty2 = (in_volt1 + shift_value) * 256 / 3055 - 7;
 
   if (af_value == "0.01")
   {
-    out_duty1 = 28;
-    out_duty2 = 28;
+    out_duty1 = 30;
+    out_duty2 = 30;
     serial_out_volt1 = 450;
     serial_out_volt2 = 450;
   }
@@ -716,7 +716,7 @@ void loop()
     if (serial_out_volt1 > 900)
     {
       serial_out_volt1 = 900;
-      out_duty1 = 63;
+      out_duty1 = 67;
     }
     if (serial_out_volt2 < 150)
     {
@@ -726,7 +726,7 @@ void loop()
     if (serial_out_volt2 > 900)
     {
       serial_out_volt2 = 900;
-      out_duty2 = 63;
+      out_duty2 = 67;
     }
   }
   dacWrite(O2OUT_PIN1, out_duty1);
