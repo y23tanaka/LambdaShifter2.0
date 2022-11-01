@@ -17,6 +17,7 @@ This program performs the following functions
 #include <WebSerial.h>
 #include <AsyncElegantOTA.h>
 #include <ESP32Ping.h>
+#include "esp_adc_cal.h"
 #define FORMAT_SPIFFS_IF_FAILED true
 
 ///// Firm version
@@ -24,8 +25,8 @@ const String firm_version = "2.0.9";
 
 ///// WiFi Config /////
 
-const char ap_ssid[] = "LS20-AP0000";
-const char ap_pass[] = "setyourpassword"; 
+const char ap_ssid[] = "LS20-AP0006";
+const char ap_pass[] = "4n4chxyVFh"; 
 const IPAddress ap_ip(10, 1, 1, 1);
 const IPAddress ap_subnet(255, 255, 255, 0);
 const IPAddress dns(8, 8, 8, 8);
@@ -372,6 +373,16 @@ void start_ap()
     Serial.println(myIP);
 }
 
+// General ADC calibration Function
+float ReadVoltage(byte ADC_PIN) {
+  float calibration  = 1.000; // Adjust for ultimate accuracy when input is measured using an accurate DVM, if reading too high then use e.g. 0.99, too low use 1.01
+  float vref = 1100;
+  esp_adc_cal_characteristics_t adc_chars;
+  esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 1100, &adc_chars);
+  vref = adc_chars.vref; // Obtain the device ADC reference voltage
+  return ((analogRead(ADC_PIN) + 310)/ 4095.0) * 1.280 * (1100 / vref) * calibration;  // ESP by design reference voltage in mV
+}
+
 ///////////////////////////// Execution Part //////////////////////////////
 void setup()
 {
@@ -681,15 +692,15 @@ void setup()
 void loop()
 {
  // Input sensor data from ADC.
-  int o2_value1 = analogRead(O2IN_PIN1);
-  int o2_value2 = analogRead(O2IN_PIN2);
+  int o2_value1 = ReadVoltage(O2IN_PIN1) * 1000;
+  int o2_value2 = ReadVoltage(O2IN_PIN2) * 1000;
 
  // This value need to adjust due to ESP32 indivisuality.
  // An offset around 0v is added to adjust the slope between the actual and measured values.
  // In many cases, the error can be corrected simply by adjusting the offset.
  // Moving averages are taken to reduce sensor variability.
-  in_volt1 =  (in_volt1 * 3 + (o2_value1 + 330) * 1330 / 4095) / 4  ;
-  in_volt2 =  (in_volt2 * 3 + (o2_value2 + 330) * 1330 / 4095) / 4  ;
+  in_volt1 =  (in_volt1 * 5 + o2_value1) / 6  ;
+  in_volt2 =  (in_volt2 * 5 + o2_value2) / 6  ;
 
   serial_out_volt1 = in_volt1 + shift_value;
   serial_out_volt2 = in_volt2 + shift_value;
@@ -701,8 +712,8 @@ void loop()
 
   if (af_value == "0.01")
   {
-    out_duty1 = 30;
-    out_duty2 = 30;
+    out_duty1 = 31;
+    out_duty2 = 31;
     serial_out_volt1 = 450;
     serial_out_volt2 = 450;
   }
@@ -716,7 +727,7 @@ void loop()
     if (serial_out_volt1 > 900)
     {
       serial_out_volt1 = 900;
-      out_duty1 = 67;
+      out_duty1 = 68;
     }
     if (serial_out_volt2 < 150)
     {
@@ -726,7 +737,7 @@ void loop()
     if (serial_out_volt2 > 900)
     {
       serial_out_volt2 = 900;
-      out_duty2 = 67;
+      out_duty2 = 68;
     }
   }
   dacWrite(O2OUT_PIN1, out_duty1);
@@ -776,7 +787,7 @@ void loop()
 
   if (reset_code == 1)
   {
-    delay(1000);
+    delay(100);
     ESP.restart();
   }
 }
