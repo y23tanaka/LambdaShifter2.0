@@ -10,7 +10,7 @@ The advantages of making it richer are as follows
 - Lower engine temperature
 
 All other functions of the device can be controlled by a smartphone or other wireless LAN-compatible device.  
-[Demo Video](https://www.youtube.com/watch?v=AYFCA5j8pf0)
+[Demo Video](https://www.youtube.com/watch?v=AYFCA5j8pf0)  
 ![image](https://user-images.githubusercontent.com/110214119/200517628-1306c2d7-eb49-4635-a1d8-bf94d968d715.png)
 
 This device corresponds to STEP 1 in the project. The entire project is described below.
