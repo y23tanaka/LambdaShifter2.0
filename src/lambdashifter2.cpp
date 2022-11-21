@@ -21,12 +21,12 @@ This program performs the following functions
 #define FORMAT_SPIFFS_IF_FAILED true
 
 ///// Firm version
-const String firm_version = "2.0.9";
+const String firm_version = "2.0.10";
 
 ///// WiFi Config /////
 
-const char ap_ssid[] = "LS20-AP0004";
-const char ap_pass[] = "Wz8waCCnHp"; 
+const char ap_ssid[] = "LS20-AP0011";
+const char ap_pass[] = "hedf3WwjEy"; 
 const IPAddress ap_ip(10, 1, 1, 1);
 const IPAddress ap_subnet(255, 255, 255, 0);
 const IPAddress dns(8, 8, 8, 8);
@@ -381,7 +381,7 @@ float ReadVoltage(byte ADC_PIN) {
   esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 1100, &adc_chars);
   vref = adc_chars.vref; // Obtain the device ADC reference voltage
   // offset 10mV around 28,  
-  return ((analogRead(ADC_PIN) + 250)/ 4095.0) * 1.255 * (1100 / vref) * calibration;  // ESP by design reference voltage in mV
+  return ((analogRead(ADC_PIN) + 270)/ 4095.0) * 1.325 * (1100 / vref) * calibration;  // ESP by design reference voltage in mV
 }
 
 ///////////////////////////// Execution Part //////////////////////////////
@@ -618,8 +618,8 @@ void setup()
       });
 
  // Load graph engine.
-  server.on("/chart.js.gz", HTTP_GET, [](AsyncWebServerRequest *request)
-            { AsyncWebServerResponse *response = request->beginResponse(SPIFFS, "/chart.js.gz", "text/javascript");
+  server.on("/chart.jgz", HTTP_GET, [](AsyncWebServerRequest *request)
+            { AsyncWebServerResponse *response = request->beginResponse(SPIFFS, "/chart.jgz", "text/javascript");
     response->addHeader("Content-Encoding", "gzip");
     request->send(response); });
 
@@ -708,14 +708,14 @@ void loop()
  // This value need to adjust due to ESP32 indivisuality.
  // An offset around 0v is added to adjust the slope between the actual and measured values.
  // In many cases, the error can be corrected simply by adjusting the offset.
- // offset 10mv 7, Scale: 10mv@800 35  
-  int out_duty1 = (in_volt1 + shift_value - 85) * 255 / 3045;
-  int out_duty2 = (in_volt2 + shift_value - 45) * 255 / 3080;
+ // Scale 35  10mv@ 800
+  int out_duty1 = (in_volt1 + shift_value - 65) * 255 / 3150;
+  int out_duty2 = (in_volt1 + shift_value - 65) * 255 / 3150;
  //                                         ^           ^
   if (af_value == "0.01")
   {
     out_duty1 = 31;
-    out_duty2 = 33;
+    out_duty2 = 31;
     serial_out_volt1 = 450;
     serial_out_volt2 = 450;
   }
@@ -729,7 +729,7 @@ void loop()
     if (serial_out_volt1 > 900)
     {
       serial_out_volt1 = 900;
-      out_duty1 = 69;
+      out_duty1 = 68;
     }
     if (serial_out_volt2 < 150)
     {
@@ -739,7 +739,7 @@ void loop()
     if (serial_out_volt2 > 900)
     {
       serial_out_volt2 = 900;
-      out_duty2 = 69;
+      out_duty2 = 68;
     }
   }
   dacWrite(O2OUT_PIN1, out_duty1);

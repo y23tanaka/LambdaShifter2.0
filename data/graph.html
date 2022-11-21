@@ -7,7 +7,7 @@
     <meta name="format-detection" content="telephone=no" />
     <link rel="icon" type="image/x-icon" href="favicon" />
     <link rel="stylesheet" href="/style.css" />
-    <script src="/chart.js.gz"></script>
+    <script src="/chart.jgz"></script>
     <title>O2sensor %RELOAD_BTN% Graph</title>
     <style>
         .bb-axis line,
@@ -47,12 +47,10 @@
     <div id="bar2" style="height:70px;"></div>
     <div id="chart2" style="height:220px;"></div>
     %SECONDARY_OFF2%
-
     <hr>
     <div>&copy; 2022 Yosuke Tanaka</div>
 </body>
 <script>
-
     var data = ["data1"].concat(0);
     var interval;
     var bar = bb.generate({
