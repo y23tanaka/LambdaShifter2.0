@@ -25,8 +25,8 @@ const String firm_version = "2.0.10";
 
 ///// WiFi Config /////
 
-const char ap_ssid[] = "LS20-AP0011";
-const char ap_pass[] = "hedf3WwjEy"; 
+const char ap_ssid[] = "LS20-AP0000";
+const char ap_pass[] = "0123456789"; 
 const IPAddress ap_ip(10, 1, 1, 1);
 const IPAddress ap_subnet(255, 255, 255, 0);
 const IPAddress dns(8, 8, 8, 8);
