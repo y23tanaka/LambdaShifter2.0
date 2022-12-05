@@ -25,8 +25,8 @@ const String firm_version = "2.0.10";
 
 ///// WiFi Config /////
 
-const char ap_ssid[] = "LS20-AP0000";
-const char ap_pass[] = "0123456789"; 
+const char ap_ssid[] = "LS20-AP0026";
+const char ap_pass[] = "Q6bZwk8z5K"; 
 const IPAddress ap_ip(10, 1, 1, 1);
 const IPAddress ap_subnet(255, 255, 255, 0);
 const IPAddress dns(8, 8, 8, 8);
@@ -381,7 +381,7 @@ float ReadVoltage(byte ADC_PIN) {
   esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 1100, &adc_chars);
   vref = adc_chars.vref; // Obtain the device ADC reference voltage
   // offset 10mV around 28,  
-  return ((analogRead(ADC_PIN) + 270)/ 4095.0) * 1.325 * (1100 / vref) * calibration;  // ESP by design reference voltage in mV
+  return ((analogRead(ADC_PIN) + 285)/ 4095.0) * 1.270 * (1100 / vref) * calibration;  // ESP by design reference voltage in mV
 }
 
 ///////////////////////////// Execution Part //////////////////////////////
@@ -708,14 +708,14 @@ void loop()
  // This value need to adjust due to ESP32 indivisuality.
  // An offset around 0v is added to adjust the slope between the actual and measured values.
  // In many cases, the error can be corrected simply by adjusting the offset.
- // Scale 35  10mv@ 800
-  int out_duty1 = (in_volt1 + shift_value - 65) * 255 / 3150;
-  int out_duty2 = (in_volt1 + shift_value - 65) * 255 / 3150;
+ // Offset 10 10mv          Scale 35 10mv@ 800
+  int out_duty1 = (in_volt1 + shift_value - 70) * 255 / 3110;
+  int out_duty2 = (in_volt2 + shift_value - 60) * 255 / 3090;
  //                                         ^           ^
   if (af_value == "0.01")
   {
     out_duty1 = 31;
-    out_duty2 = 31;
+    out_duty2 = 32;
     serial_out_volt1 = 450;
     serial_out_volt2 = 450;
   }
