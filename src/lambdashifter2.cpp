@@ -80,6 +80,7 @@ int code_value;
 int counter;
 int reset_code = 0;
 
+
 esp_adc_cal_characteristics_t adcChar;
 
 ///// Function for rewrite web pages
@@ -385,9 +386,9 @@ void setup()
   pinMode(CODE_PIN1, OUTPUT);
   pinMode(CODE_PIN2, OUTPUT);
   adc1_config_width(ADC_WIDTH_BIT_12);
-  adc1_config_channel_atten(ADC1_CHANNEL_7, ADC_ATTEN_DB_2_5); // GPIO35
-  adc1_config_channel_atten(ADC1_CHANNEL_4, ADC_ATTEN_DB_2_5); // GPIO32
-  esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_2_5, ADC_WIDTH_BIT_12, 1100, &adcChar);
+  adc1_config_channel_atten(ADC1_CHANNEL_7, ADC_ATTEN_DB_0);  // GPIO35
+  adc1_config_channel_atten(ADC1_CHANNEL_4, ADC_ATTEN_DB_0); // GPIO32
+  esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_0, ADC_WIDTH_BIT_12, 1100, &adcChar);
   dac_output_enable(DAC_CHANNEL_1);
   dac_output_enable(DAC_CHANNEL_2);
 
@@ -670,30 +671,33 @@ void setup()
 void loop()
 {
   // Input sensor data from ADC.
-  uint32_t o2_value1;
-  uint32_t o2_value2;
+uint32_t o2_value1;
+uint32_t o2_value2;
   esp_adc_cal_get_voltage(ADC_CHANNEL_7, &adcChar, &o2_value1); // GPIO35
-  esp_adc_cal_get_voltage(ADC_CHANNEL_4, &adcChar, &o2_value2); // GPIO32
+  esp_adc_cal_get_voltage(ADC_CHANNEL_4, &adcChar, &o2_value2);  // GPIO32
 
-  in_volt1 = (in_volt1 * 5 + o2_value1) / 6;
-  in_volt2 = (in_volt2 * 5 + o2_value2) / 6;
+// Tilt and offset must be adjusted depending on individual ESP32.
+//  in_volt1 = (in_volt1 * 5 + o2_value1 ) / 6;
+//  in_volt2 = (in_volt2 * 5 + o2_value2) / 6;
+//  in_volt1 = (in_volt1 * 5 + o2_value1 + 14 - (o2_value1 * 0.0155))  / 6;
+//  in_volt2 = (in_volt2 * 5 + o2_value2 + 14 - (o2_value2 * 0.0155))  / 6;
+  in_volt1 = (in_volt1 * 5 + o2_value1 -5 ) / 6;
+  in_volt2 = (in_volt2 * 5 + o2_value2 -5 ) / 6;
 
   serial_out_volt1 = in_volt1 + shift_value;
   serial_out_volt2 = in_volt2 + shift_value;
 
-  // This value need to adjust due to ESP32 indivisuality.
-  // An offset around 0v is added to adjust the slope between the actual and measured values.
-  // In many cases, the error can be corrected simply by adjusting the offset.
+  // Tilt and offset must be adjusted depending on individual ESP32.
   //  int out_duty1 = (in_volt1 + shift_value - 90) * 255 / 3070;
   //  int out_duty2 = (in_volt2 + shift_value - 110) * 255 / 3110;
-  int out_duty1 = round((in_volt1 + shift_value - 100) * 0.0830);
-  int out_duty2 = round((in_volt2 + shift_value - 100) * 0.0830);
+  int out_duty1 = round((in_volt1 + shift_value - 60) * 0.0815);
+  int out_duty2 = round((in_volt2 + shift_value - 115) * 0.0830);
 
   //                                         ^           ^
   if (af_value == "0.01")
   {
-    out_duty1 = 27;
-    out_duty2 = 28;
+    out_duty1 = 31;
+    out_duty2 = 29;
     serial_out_volt1 = 450;
     serial_out_volt2 = 450;
   }
@@ -755,8 +759,8 @@ void loop()
     WebSerial.print(",");
     WebSerial.print("coeff_b: ");
     WebSerial.print(adcChar.coeff_b);
-    WebSerial.print("CPU_temp: ");
-    WebSerial.println(temperatureRead());
+//    WebSerial.print("o2_value1: ");
+//    WebSerial.println(o2_value1);
 
     /*   String web_str = String(o2_value1);
        web_str += ",";
